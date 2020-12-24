@@ -13,8 +13,15 @@ const ItemSchema = new mongoose.Schema({
 })
 const ListSchema = new mongoose.Schema({
 	name: String,
-	items: [ItemSchema]
-})
+	items: [ItemSchema],
+	
+},
+{writeConcern: {
+		w: 'majority',
+          j: true,
+          wtimeout: 1000
+        }}
+    )
 const Item = new mongoose.model("Item",ItemSchema);
 const List =  new mongoose.model("List", ListSchema);
 var items = []
@@ -109,6 +116,7 @@ app.get("/:customListName",function(req,res){
 
 });
 app.post('/delete', function(req,res){
+	console.log(req.body);
 	console.log(req.body.checkbox);	
 	var date = new Date();
 	today = date.toLocaleDateString("en-US", options);
@@ -126,9 +134,14 @@ app.post('/delete', function(req,res){
 		})
 	}
 	else{
+		console.log(listTitle);
 		List.findOneAndUpdate({name: listTitle},{$pull: {items:{_id: req.body.checkbox}}}, function(err){
 			if (!err){
+				console.log("Deleted");
 				res.redirect("/"+listTitle);
+			}
+			else{
+				console.log(err);
 			}
 		})
 	}
