@@ -133,7 +133,11 @@ app.post('/delete', function(req,res){
 		})
 	}
 })
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
 
-app.listen(3000, function(){
+app.listen(port, function(){
 	console.log("Server is up and running.")
 })
